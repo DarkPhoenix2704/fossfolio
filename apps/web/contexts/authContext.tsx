@@ -1,5 +1,5 @@
 import React, { createContext, useState, useMemo, useEffect } from 'react';
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 import Session from 'supertokens-auth-react/recipe/session';
 import { getAuthorisationURLWithQueryParamsAndSetState } from 'supertokens-auth-react/recipe/thirdparty';
 import api from '@app/api';
@@ -25,6 +25,15 @@ export const AuthProvider = ({ children }: Child) => {
     const [isProfileComplete, setIsProfileComplete] = useState<boolean>(false);
     const [isUserExist, setUserExist] = useState<boolean>(false);
     const { doesSessionExist } = Session;
+
+    // listening for route change events
+    Router.events.on('routeChangeStart', () => {
+        // when route change loading screen popup
+        setUserLoading(true);
+    });
+    Router.events.on('routeChangeComplete', () => {
+        setUserLoading(false);
+    });
 
     const getData = async () => {
         try {
@@ -56,7 +65,8 @@ export const AuthProvider = ({ children }: Child) => {
         try {
             const authUrl = await getAuthorisationURLWithQueryParamsAndSetState({
                 providerId: 'github',
-                authorisationURL: `${process.env.NEXT_PUBLIC_WEBSITE_DOMAIN}/auth`,
+                // this url is based on what url you set on github dashboard callback url
+                authorisationURL: `${process.env.NEXT_PUBLIC_WEBSITE_DOMAIN}/auth/callback/github`,
             });
             router.push(authUrl);
         } catch (err: any) {
