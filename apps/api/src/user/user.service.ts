@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Profile } from 'passport';
+import { type Profile as SAMlProfile } from 'passport-saml';
 import { USER_UPDATE_ERROR } from '../error';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -47,6 +48,8 @@ export class UserService {
             if (user) continue;
             break;
         }
+
+
         const createdUser = await this.prismaService.user.create({
             data: {
                 displayName: userDisplayName,
@@ -55,7 +58,7 @@ export class UserService {
                 slug,
                 providerAccounts: {
                     create: {
-                        provider: profile.provider,
+                        provider: profile.provider ,
                         providerAccountId: profile.id,
                         providerRefreshToken: refreshToken,
                         providerAccessToken: accessToken,

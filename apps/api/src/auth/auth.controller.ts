@@ -33,6 +33,18 @@ export class AuthController {
         cookieHandler(res, authToken, true);
     }
 
+    @Get('/saml/:provider')
+    async samlOAuth() {}
+    
+    @Get('/saml/:provider/callback')
+    async samlOAuthCallback(@Request() req, @Response() res) {
+        const genToken = await this.authService.refreshAuthToken(
+            req.user,
+            req.cookies['refresh_token']
+        )
+        cookieHandler(res, genToken, false)
+    }
+ 
     @Get('/refresh')
     @UseGuards(RefreshGuard)
     async refresh(@Request() req, @Response() res) {
@@ -51,4 +63,5 @@ export class AuthController {
 
         res.redirect(process.env.CLIENT_REDIRECT_URI);
     }
+
 }
