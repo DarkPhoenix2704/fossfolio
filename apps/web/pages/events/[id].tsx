@@ -17,7 +17,7 @@ const Event: NextPageWithLayout = () => {
     const { data: registerStatus, refetch: refetchStatus } = useUserRegistartionStatus();
     const [isFormOpen, toggleForm] = useToggle(false);
     const router = useRouter();
-    // pk of event
+    // slug of event
     const { id } = router.query;
 
     const registerEvent = async () => {
@@ -69,7 +69,7 @@ const Event: NextPageWithLayout = () => {
                             editable: () => false,
                         }}
                     />
-                    <div className="h-[290px] flex flex-col rounded-md">
+                    <div className="flex flex-col rounded-md">
                         <Image
                             src={data.data.coverImage as string}
                             width={500}
@@ -78,7 +78,7 @@ const Event: NextPageWithLayout = () => {
                         />
 
                         {registerStatus?.isRegistred ? (
-                            <Button size="sm" disabled>
+                            <Button size="sm" disabled className="mt-3">
                                 Already registered
                             </Button>
                         ) : (
@@ -87,6 +87,7 @@ const Event: NextPageWithLayout = () => {
                                 onClick={register}
                                 size="sm"
                                 variant="outline"
+                                className="mt-3"
                             >
                                 Register
                             </Button>

@@ -24,6 +24,8 @@ model User {
 
   Response Response[]
   Ticket   Ticket[]
+  Kanban   Kanban[]
+  Task     Task[]
 }
 
 model Account {
@@ -107,6 +109,7 @@ model Events {
   stripe_price_object   String?
   stripe_product_object String?
   Ticket                Ticket[]
+  kanban                Kanban[]
 }
 
 model Field {
@@ -148,6 +151,30 @@ model Ticket {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Kanban {
+  id        String @id @default(cuid())
+  title     String
+  tasks     Task[]
+  createdBy User   @relation(fields: [userUid], references: [uid])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userUid   String
+  Events    Events?  @relation(fields: [eventsId], references: [id])
+  eventsId  String?
+}
+
+model Task {
+  id        String   @id @default(cuid())
+  title     String
+  createdBy User     @relation(fields: [userUid], references: [uid])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Kanban    Kanban?  @relation(fields: [kanbanId], references: [id])
+  kanbanId  String?
+  userUid   String
 }
 
 enum Role {

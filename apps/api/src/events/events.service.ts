@@ -418,7 +418,9 @@ export class EventsService {
             if (e instanceof NotFoundException) {
                 throw new NotFoundException();
             } else {
-                return e;
+                throw new InternalServerErrorException({
+                    error: e,
+                });
             }
         }
     }
