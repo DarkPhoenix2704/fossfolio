@@ -22,21 +22,29 @@ import { Card, CardContent } from '@app/ui/components/card';
 import { apiHandler } from '@app/config';
 import { useRouter } from 'next/router';
 import { toast } from 'sonner';
+import { AxiosError } from 'axios';
 
 const Settings = () => {
     const { data, isLoading } = useEvent('event');
     const router = useRouter();
-    const { pk, id } = router.query;
+    const { id } = router.query;
 
     const deleteEvent = async () => {
         try {
-            await apiHandler.delete(`/events/delete/${pk}`, {
+            await apiHandler.delete(`/events/delete/${data?.data.id}`, {
                 data: { organizationId: id },
             });
             toast.success('Event was deleted successfully');
             router.push('/org');
-        } catch {
-            toast.error('Error deleting event');
+        } catch (e: any) {
+            const error = e as AxiosError<{
+                message: string;
+            }>;
+            if (error.response?.data && error.response?.data?.message) {
+                toast.error(error.response.data.message);
+            } else {
+                toast.error('Error deleting event');
+            }
         }
     };
 
@@ -91,7 +99,7 @@ const Settings = () => {
                                     name="maxTicketCount"
                                     render={({ field }) => (
                                         <FormItem className="items-center ">
-                                            <FormLabel>Maximum Ticket Count</FormLabel>
+                                            <FormLabel>Total Tickets left</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     min={1}

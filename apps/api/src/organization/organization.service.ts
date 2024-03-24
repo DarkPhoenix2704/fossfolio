@@ -228,6 +228,32 @@ export class OrganizationService {
             }
         }
     }
+
+    async getEventsByorg(key: string) {
+        try {
+            const data = await this.prismaService.organization.findUnique({
+                where: {
+                    slug: key,
+                },
+                select: {
+                    events: {
+                        where: {
+                            isPublished: true,
+                        },
+                    },
+                    name: true,
+                },
+            });
+            if (!data) throw new NotFoundException();
+            return {
+                ok: true,
+                message: 'Events found successfully',
+                data,
+            };
+        } catch {
+            throw new NotFoundException();
+        }
+    }
 }
 
 type Data = {

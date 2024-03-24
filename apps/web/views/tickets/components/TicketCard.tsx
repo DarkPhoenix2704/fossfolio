@@ -34,7 +34,7 @@ export const TicketCard = ({ data, type }: Prop) => {
 
     return (
         <>
-            <div className="flex justify-between mt-10 p-14">
+            <div className="flex justify-between mt-10 p-14 flex-wrap gap-2">
                 <TicketModal isOpen={isOpen} onClose={triggerModal.off} data={info} />
                 {data.map((el) => (
                     <div

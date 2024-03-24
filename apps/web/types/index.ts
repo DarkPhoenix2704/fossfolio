@@ -71,6 +71,7 @@ export interface OrgEvents {
     coverImage?: string;
     isFormPublished: boolean;
     form: Iform[];
+    slug: string;
 }
 
 export type Iform = {

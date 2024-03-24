@@ -70,10 +70,8 @@ export const NewEventDialog = ({ isOpen, onClose, refetch }: IModal) => {
         },
     });
 
-    console.log(form.formState.errors);
-
     /* 
-    generate a new event , doing this here to create unique id to route into
+    generate a new event , doing this here to create unique slug to route into
     only after publishing the event public can access the event 
     */
     const onUserSubMit: SubmitHandler<ISchema> = async (val) => {

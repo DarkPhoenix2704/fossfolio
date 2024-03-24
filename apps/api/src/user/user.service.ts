@@ -127,25 +127,23 @@ export class UserService {
                 where: {
                     uid: id,
                 },
+
                 select: {
-                    registeredEventsId: {
+                    Ticket: {
                         select: {
-                            name: true,
-                            eventDate: true,
-                            location: true,
-                            id: true,
-                            coverImage: true,
+                            event: true,
                         },
                     },
                 },
             });
+
             if (!data) {
                 throw new NotFoundException();
             }
             return {
                 ok: true,
                 message: 'Ticket found successfully',
-                data: data.registeredEventsId,
+                data: data.Ticket.map((el) => el.event),
             };
         } catch (e) {
             if (e instanceof NotFoundException) {
@@ -156,7 +154,7 @@ export class UserService {
         }
     }
 
-    generateSlug() {
+    private generateSlug() {
         return fakerEN.lorem.slug({
             min: 1,
             max: 2,

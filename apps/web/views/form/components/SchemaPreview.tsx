@@ -1,5 +1,6 @@
 import { Button } from '@app/components/ui/Button';
 import { apiHandler } from '@app/config';
+import { useUserRegistartionStatus } from '@app/hooks/api/Events';
 import { Iform } from '@app/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@app/ui/components/card';
 import { Checkbox } from '@app/ui/components/checkbox';
@@ -13,19 +14,17 @@ import {
     SelectValue,
 } from '@app/ui/components/select';
 import { Textarea } from '@app/ui/components/textarea';
-import { useRouter } from 'next/router';
 import { toast } from 'sonner';
 
 type Prop = {
     data: Iform[];
     isPublic: boolean;
     closeModal?: () => void;
+    eventId: string;
 };
 
-export const SchemaPreview = ({ data, closeModal, isPublic = false }: Prop) => {
-    const router = useRouter();
-
-    const { id } = router.query;
+export const SchemaPreview = ({ data, closeModal, isPublic = false, eventId }: Prop) => {
+    const { refetch: refetchStatus } = useUserRegistartionStatus();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         if (!isPublic) return;
@@ -41,12 +40,13 @@ export const SchemaPreview = ({ data, closeModal, isPublic = false }: Prop) => {
             }
         }
         try {
-            const { data } = await apiHandler.post(`/events/form/${id}`, formData);
+            const { data } = await apiHandler.post(`/events/form/${eventId}`, formData);
             if (data.url) {
                 // shoudl use stripe js library to pass session id
                 window.location.href = data.url;
             }
             toast.success('Form submitted successfully');
+            refetchStatus();
             if (closeModal) {
                 closeModal();
             }

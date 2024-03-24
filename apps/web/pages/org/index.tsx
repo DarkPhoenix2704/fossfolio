@@ -38,10 +38,10 @@ const Index: NextPageWithLayout = () => {
                         </div>
                         {data?.data.map((el) => (
                             <OrgCard
+                                key={el.organization.id}
                                 role={el.role}
                                 name={el.organization.name}
                                 id={el.organization.id}
-                                key={el.organization.id}
                                 events={el.organization._count.events}
                                 members={el.organization._count.members}
                             />

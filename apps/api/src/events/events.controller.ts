@@ -4,6 +4,7 @@ import {
     Delete,
     FileTypeValidator,
     Get,
+    InternalServerErrorException,
     MaxFileSizeValidator,
     NotFoundException,
     Param,
@@ -43,9 +44,9 @@ export class EventsController {
 
     @Get('/:eventId')
     @ApiTags('events')
-    @ApiOperation({ summary: 'returns the specific event with id' })
+    @ApiOperation({ summary: 'returns the specific event with slug' })
     async getEventByID(@Param('eventId') id: string) {
-        return await this.events.getEventById(id);
+        return await this.events.getEventBySlugId(id);
     }
 
     @Post('/create')
@@ -117,8 +118,16 @@ export class EventsController {
     @ApiTags('events')
     @ApiOperation({ summary: 'Get if participant is registerd for event or not' })
     @UseGuards(AuthGuard('jwt'), RbacGuard)
-    async getUserEventStatus(@Param('id') id: string, @AuthUser() user: User) {
-        return await this.events.getEventRegistartionStatus(id, user.uid);
+    async getUserEventStatus(@Param('id') slugId: string, @AuthUser() user: User) {
+        return await this.events.getEventRegistartionStatus(slugId, user.uid);
+    }
+
+    @Get('/stats/:id')
+    @ApiTags('events')
+    @ApiOperation({ summary: 'Get event stats' })
+    @UseGuards(AuthGuard('jwt'), RbacGuard)
+    async getEventStats(@Param('id') id: string) {
+        return await this.events.getEventStats(id);
     }
 
     @Post('/form')
@@ -157,8 +166,8 @@ export class EventsController {
     @Roles('ADMIN', 'EDITOR')
     @ApiOperation({ summary: 'get form schema of a specific event' })
     @UseGuards(AuthGuard('jwt'), RbacGuard)
-    async getFormSchema(@Param('eventId') eventId: string) {
-        return await this.events.getEventFormScheme(eventId);
+    async getFormSchema(@Param('eventId') slugId: string) {
+        return await this.events.getEventFormScheme(slugId);
     }
 
     @Post('/form/:eventId')
@@ -171,19 +180,17 @@ export class EventsController {
         @AuthUser() user: User,
     ) {
         try {
-            const event = await this.events.getEventInfo(eventId);
+            const event = await this.events.getEventById(eventId);
+
             if (event.maxTicketCount < 1) {
                 throw new NotFoundException();
             }
             await this.events.addUserFormSubmission(data, eventId, user.uid);
-            return await this.events.registerEvent(eventId, user.uid);
+            return await this.events.registerEvent(event.slug, user.uid);
         } catch (e) {
-            if (e instanceof NotFoundException) return new NotFoundException();
-            return {
-                ok: false,
-                message: 'Invalid request',
-                error: e,
-            };
+            if (e instanceof NotFoundException) throw new NotFoundException();
+
+            throw new InternalServerErrorException();
         }
     }
 
@@ -198,8 +205,7 @@ export class EventsController {
 
     @Get('/ticket/:eventId')
     @ApiTags('events')
-    @Roles('ADMIN', 'EDITOR')
-    @ApiOperation({ summary: 'publish or not publish the already build form public' })
+    @ApiOperation({ summary: 'return  ticket info' })
     async getTicketInfo(@Param('eventId') eventId: string) {
         return await this.events.getTicketInfo(eventId);
     }

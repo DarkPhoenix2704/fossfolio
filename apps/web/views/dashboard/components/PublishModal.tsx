@@ -121,7 +121,7 @@ export const PublishModal = ({ isOpen, onClose }: IModal) => {
             const dataWithOutImage = await apiHandler.patch(`/events/edit`, {
                 ...payload,
                 organizationId: id,
-                eventId: pk,
+                eventSlug: pk,
                 maxTicketCount: Number(payload.maxTicketCount),
                 isPublished: true,
                 maxTeamSize: Number(payload.maxTeamSize),

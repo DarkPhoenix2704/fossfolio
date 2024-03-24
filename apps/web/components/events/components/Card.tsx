@@ -1,6 +1,5 @@
 import { BiLink, BiLocationPlus } from 'react-icons/bi';
 import { BsCalendarDate } from 'react-icons/bs';
-
 import { Button } from '@app/ui/components/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@app/ui/components/card';
 import { OrgEvents } from '@app/types';
@@ -25,13 +24,13 @@ export function EventCard({
     location,
     lastDate,
     isOrg = false,
-    id,
+    slug,
     coverImage,
 }: Prop): JSX.Element {
     const router = useRouter();
 
     const goToEventInfo = () => {
-        router.push(`/events/${id}`);
+        router.push(`/events/${slug}`);
     };
     return (
         <Card className="w-[330px] md:w-[400px] mt-6 hover:cursor-pointer hover:outline-double hover:outline-primary">
@@ -52,13 +51,15 @@ export function EventCard({
                     )}
                     <div className="flex items-center">
                         <BiLocationPlus className="mr-1 h-3 w-3 fill-sky-400 text-sky-400" />
-                        {location}I
+                        {location}
                     </div>
 
-                    <div className="flex items-center">
-                        <BsCalendarDate className="mr-1 h-3 w-3" />
-                        Last date: {format(new Date(lastDate), 'dd/MM/yyyy')}
-                    </div>
+                    {lastDate && (
+                        <div className="flex items-center">
+                            <BsCalendarDate className="mr-1 h-3 w-3" />
+                            Last date: {format(new Date(lastDate), 'dd/MM/yyyy')}
+                        </div>
+                    )}
                 </div>
                 {!isOrg ? (
                     <Button

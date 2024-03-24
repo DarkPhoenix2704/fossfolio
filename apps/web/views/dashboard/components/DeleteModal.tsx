@@ -8,6 +8,7 @@ import { IData } from '@app/hooks/api/org/useParticipants';
 
 type IModal = {
     isOpen: boolean;
+    eventId: string;
     onClose: () => void;
     userId: string;
     refetch: <TPageData>(
@@ -15,14 +16,14 @@ type IModal = {
     ) => Promise<QueryObserverResult<IData, unknown>>;
 };
 
-export const DeleteModal = ({ isOpen, onClose, userId, refetch }: IModal) => {
+export const DeleteModal = ({ isOpen, onClose, userId, refetch, eventId }: IModal) => {
     const router = useRouter();
 
     const handleDeleteClick = async () => {
         try {
             // todo route is diffrent
             const { data } = await apiHandler.delete('/events/participants/delete', {
-                data: { organizationId: router.query?.id, eventId: router.query?.pk, userId },
+                data: { organizationId: router.query?.id, eventId: eventId, userId },
             });
             if (!data.ok) {
                 throw new Error();

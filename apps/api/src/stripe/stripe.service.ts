@@ -20,37 +20,42 @@ export class StripeService {
     }
 
     async handleWebHookEvent(body, signature) {
-        const event = this.stripe.webhooks.constructEvent(
-            body,
-            signature,
-            process.env.STRIPE_WEBHOOK_SECRET,
-        );
-        if (event.type === 'payment_intent.created') {
-            const eventInfo = event.data.object.metadata;
-            const { event_id, user_id } = eventInfo;
-            if (!event_id || !user_id) {
-                throw new Error('Invalid metadata');
-            } else {
-                const event = await this.prisma.events.findUnique({
-                    where: {
-                        id: event_id,
-                    },
-                });
-
-                await this.prisma.events.update({
-                    where: {
-                        id: event_id,
-                    },
-                    data: {
-                        registeredUsers: {
-                            connect: {
-                                uid: user_id,
-                            },
+        try {
+            const event = this.stripe.webhooks.constructEvent(
+                body,
+                signature,
+                process.env.STRIPE_WEBHOOK_SECRET,
+            );
+            if (event.type === 'payment_intent.created') {
+                const eventInfo = event.data.object.metadata;
+                const { event_id, user_id } = eventInfo;
+                if (!event_id || !user_id) {
+                    throw new Error('Invalid metadata');
+                } else {
+                    const event = await this.prisma.events.findUnique({
+                        where: {
+                            id: event_id,
                         },
-                        maxTicketCount: event.maxTicketCount - 1,
-                    },
-                });
+                    });
+
+                    await this.prisma.events.update({
+                        where: {
+                            id: event_id,
+                        },
+                        data: {
+                            Ticket: {
+                                create: {
+                                    userUid: user_id,
+                                },
+                            },
+                            maxTicketCount: event.maxTicketCount - 1,
+                        },
+                    });
+                }
             }
+        } catch (e) {
+            console.log(e);
+            throw new Error('Failed to handle payments');
         }
     }
 

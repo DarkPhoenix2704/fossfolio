@@ -1,16 +1,16 @@
-import { NextPageWithLayout } from 'next';
+import { EventCard, NoData, PreLoader } from '@app/components/events';
+import { usePublicOrgEvents } from '@app/hooks/api/Events';
 import { HomeLayout } from '@app/layout';
-import { EventCard, PreLoader, NoData } from '@app/components/events';
-import { useAllEvents } from '@app/hooks/api/Events';
+import { NextPageWithLayout } from 'next';
 
-const Events: NextPageWithLayout = () => {
-    const { isLoading, data } = useAllEvents();
+const Event: NextPageWithLayout = () => {
+    const { data, isLoading } = usePublicOrgEvents();
 
     if (isLoading) {
         return <PreLoader count={12} />;
     }
 
-    if (data?.length === 0) {
+    if (data?.data.events.length === 0) {
         return (
             <div className="p-6 flex flex-col items-center">
                 <h1 className="text-center text-5xl">Find Events</h1>
@@ -23,13 +23,12 @@ const Events: NextPageWithLayout = () => {
 
     return (
         <div className="p-6 flex flex-col items-center">
-            <h1 className="text-center text-5xl">Find Events</h1>
+            <h1 className="text-center text-5xl">{data?.data.name.toUpperCase()}</h1>
             <div className="flex flex-wrap flex-col  justify-center items-center p-4  gap-10 lg:flex-row lg:items-center lg:justify-normal lg:w-[90%]">
-                {data?.map((el) => (
+                {data?.data.events.map((el) => (
                     <EventCard
                         name={el.name}
                         id={el.id}
-                        key={el.id}
                         location={el.location}
                         website={el.website}
                         lastDate={el.lastDate}
@@ -43,6 +42,6 @@ const Events: NextPageWithLayout = () => {
     );
 };
 
-Events.Layout = HomeLayout;
-Events.RequireAuth = false;
-export default Events;
+Event.Layout = HomeLayout;
+Event.RequireAuth = false;
+export default Event;

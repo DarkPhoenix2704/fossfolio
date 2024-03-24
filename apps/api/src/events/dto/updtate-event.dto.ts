@@ -10,7 +10,7 @@ export class UpdateEventDto {
     @ApiProperty()
     @IsString()
     @IsNotEmpty()
-    eventId: string;
+    eventSlug: string;
 
     @ApiProperty()
     name: string;

@@ -80,7 +80,7 @@ const Form: NextPageWithLayout = () => {
             await apiHandler.post('/events/form', {
                 organizationId: router.query?.id,
                 data: schema,
-                eventId: router.query?.pk,
+                eventId: eventInfo?.data.id,
             });
         } catch {
             toast.error('Error adding new schema');
@@ -257,7 +257,11 @@ const Form: NextPageWithLayout = () => {
                         )}
 
                         {data?.data && data.data.length > 0 && (
-                            <SchemaPreview data={data.data} isPublic={false} />
+                            <SchemaPreview
+                                data={data.data}
+                                isPublic={false}
+                                eventId={eventInfo?.data.id as string}
+                            />
                         )}
                     </section>
                 </div>

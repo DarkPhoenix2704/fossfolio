@@ -24,9 +24,10 @@ interface Data {
     refetch: <TPageData>(
         options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined,
     ) => Promise<QueryObserverResult<IData, unknown>>;
+    id: string;
 }
 
-export const Participants = ({ data, doesEventHaveForm = false, refetch }: Data) => {
+export const Participants = ({ data, doesEventHaveForm = false, refetch, id }: Data) => {
     const [isModapOpen, toggleModal] = useToggle(false);
     const [isDrawerOpen, toggleDrawer] = useToggle(false);
 
@@ -39,6 +40,7 @@ export const Participants = ({ data, doesEventHaveForm = false, refetch }: Data)
                 onClose={toggleModal.off}
                 userId={userToBeDeleted}
                 refetch={refetch}
+                eventId={id}
             />
             <FormDrawer open={isDrawerOpen} onClose={toggleDrawer.off} userId={userMoreInfoId} />
             <TableHeader className="bg-[#F9FAFB] rounded-lg">

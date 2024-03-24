@@ -24,6 +24,7 @@ const Dashboard: NextPageWithLayout = () => {
                     data={data?.data}
                     doesEventHaveForm={eventData?.data.isFormPublished ? true : false}
                     refetch={refetch}
+                    id={eventData?.data.id as string}
                 />
             </div>
         );

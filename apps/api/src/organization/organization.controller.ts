@@ -33,6 +33,11 @@ export class OrganizationController {
         return await this.organizationService.getOrgById(info);
     }
 
+    @Get('/events/public/:slug')
+    async getOrgEvents(@Param('slug') slug) {
+        return await this.organizationService.getEventsByorg(slug);
+    }
+
     @Get('/events/:orgID')
     @Roles('ADMIN', 'EDITOR', 'VIEWER')
     @UseGuards(AuthGuard('jwt'), RbacGuard)

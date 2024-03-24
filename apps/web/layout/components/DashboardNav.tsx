@@ -37,10 +37,10 @@ export const DashNav = () => {
                 </div>
                 <div
                     className="font-medium flex text-lg hover:cursor-pointer  justify-center items-center gap-3"
-                    onClick={() => router.push(`/org/${id}/${pk}/teams`)}
+                    onClick={() => router.push(`/org/${id}/${pk}/tasks`)}
                 >
                     <BsPeople className="mr-2.1" />
-                    Teams
+                    Tasks
                 </div>
                 <div
                     className="font-medium flex text-lg hover:cursor-pointer  justify-center items-center gap-3"

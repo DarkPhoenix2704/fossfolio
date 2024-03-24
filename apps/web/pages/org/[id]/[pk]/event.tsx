@@ -83,7 +83,7 @@ const Event = () => {
             await apiHandler.patch(`/events/edit`, {
                 description: input,
                 organizationId: id,
-                eventId: pk,
+                eventSlug: pk,
             });
         } catch {
             console.warn('error updating event description');
@@ -95,7 +95,7 @@ const Event = () => {
             const response = await apiHandler.patch(`/events/edit`, {
                 isPublished: false,
                 organizationId: id,
-                eventId: pk,
+                eventSlug: pk,
             });
 
             return response.data || null;

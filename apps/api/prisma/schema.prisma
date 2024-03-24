@@ -22,8 +22,10 @@ model User {
   organizationMember OrganizationMember[]
   providerAccounts   Account[]
 
-  registeredEventsId Events[]
-  Response           Response[]
+  Response Response[]
+  Ticket   Ticket[]
+  Kanban   Kanban[]
+  Task     Task[]
 }
 
 model Account {
@@ -83,6 +85,7 @@ model OrganizationInvite {
 model Events {
   id                    String       @id @unique @default(dbgenerated("(gen_random_uuid())::text"))
   name                  String
+  slug                  String       @unique
   website               String?
   location              String
   lastDate              DateTime?
@@ -90,7 +93,6 @@ model Events {
   isPublished           Boolean      @default(false)
   description           Json?
   organization          Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  registeredUsers       User[]
   isTeamEvent           Boolean      @default(false)
   maxTeamSize           Int          @default(1)
   minTeamSize           Int          @default(1)
@@ -106,6 +108,8 @@ model Events {
   ticketPrice           Int          @default(0)
   stripe_price_object   String?
   stripe_product_object String?
+  Ticket                Ticket[]
+  kanban                Kanban[]
 }
 
 model Field {
@@ -136,6 +140,41 @@ model Response {
   userUid   String
   Events    Events?  @relation(fields: [eventsId], references: [id])
   eventsId  String?
+}
+
+model Ticket {
+  id       String @id @default(cuid())
+  event    Events @relation(fields: [eventsId], references: [id])
+  eventsId String
+  user     User   @relation(fields: [userUid], references: [uid])
+  userUid  String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Kanban {
+  id        String @id @default(cuid())
+  title     String
+  tasks     Task[]
+  createdBy User   @relation(fields: [userUid], references: [uid])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userUid   String
+  Events    Events?  @relation(fields: [eventsId], references: [id])
+  eventsId  String?
+}
+
+model Task {
+  id        String   @id @default(cuid())
+  title     String
+  createdBy User     @relation(fields: [userUid], references: [uid])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Kanban    Kanban?  @relation(fields: [kanbanId], references: [id])
+  kanbanId  String?
+  userUid   String
 }
 
 enum Role {

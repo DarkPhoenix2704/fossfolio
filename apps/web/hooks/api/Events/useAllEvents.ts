@@ -18,6 +18,7 @@ type Events = {
     eventDate: Date;
     location: string;
     coverImage?: string;
+    slug: string;
 };
 
 const getAllEvents = async () => {
